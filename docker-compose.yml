@@ -1,0 +1,25 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: polish-learn-app
+    ports:
+      - "8180:8180"
+    volumes:
+      # Mount data directories for persistence
+      - ./material:/app/material
+      - ./static:/app/static
+      - ./audio:/app/audio
+      # Mount database for persistence
+      - ./auth.db:/app/auth.db
+    environment:
+      - HARDCODED_USER_ID=${HARDCODED_USER_ID}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8180/')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
